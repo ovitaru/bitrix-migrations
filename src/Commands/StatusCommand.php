@@ -13,8 +13,6 @@ class StatusCommand extends AbstractCommand
      */
     protected $migrator;
 
-    protected static $defaultName = 'status';
-
     /**
      * Constructor.
      *
@@ -31,9 +29,9 @@ class StatusCommand extends AbstractCommand
     /**
      * Configures the current command.
      */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Show status about last migrations');
+        $this->setName('status')->setDescription('Show status about last migrations');
     }
 
     /**
@@ -59,15 +57,15 @@ class StatusCommand extends AbstractCommand
      */
     protected function showOldMigrations()
     {
-        $old = collect($this->migrator->getRanMigrations());
+        $old = $this->migrator->getRanMigrations();
 
         $this->output->writeln("<fg=yellow>Old migrations:\r\n</>");
 
         $max = 5;
-        if ($old->count() > $max) {
+        if (count($old) > $max) {
             $this->output->writeln('<fg=yellow>...</>');
 
-            $old = $old->take(-$max);
+            $old = array_slice($old, -$max);
         }
 
         foreach ($old as $migration) {
@@ -82,7 +80,7 @@ class StatusCommand extends AbstractCommand
      */
     protected function showNewMigrations()
     {
-        $new = collect($this->migrator->getMigrationsToRun());
+        $new = $this->migrator->getMigrationsToRun();
 
         $this->output->writeln("<fg=green>New migrations:\r\n</>");
 

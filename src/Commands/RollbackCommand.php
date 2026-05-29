@@ -15,8 +15,6 @@ class RollbackCommand extends AbstractCommand
      */
     protected $migrator;
 
-    protected static $defaultName = 'rollback';
-
     /**
      * Constructor.
      *
@@ -33,9 +31,9 @@ class RollbackCommand extends AbstractCommand
     /**
      * Configures the current command.
      */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Rollback the last migration')
+        $this->setName('rollback')->setDescription('Rollback the last migration')
             ->addOption('hard', null, InputOption::VALUE_NONE, 'Rollback without running down()')
             ->addOption('delete', null, InputOption::VALUE_NONE, 'Delete migration file after rolling back');
     }
@@ -104,6 +102,7 @@ class RollbackCommand extends AbstractCommand
      */
     protected function markRolledBackWithConfirmation($migration)
     {
+        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion("<error>Migration $migration was not found.\r\nDo you want to mark it as rolled back? (y/n)</error>\r\n", false);
 

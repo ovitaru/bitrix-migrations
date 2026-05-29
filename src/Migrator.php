@@ -72,7 +72,7 @@ class Migrator
      * @param DatabaseStorageInterface $database
      * @param FileStorageInterface     $files
      */
-    public function __construct($config, TemplatesCollection $templates, DatabaseStorageInterface $database = null, FileStorageInterface $files = null)
+    public function __construct($config, TemplatesCollection $templates, ?DatabaseStorageInterface $database = null, ?FileStorageInterface $files = null)
     {
         $this->config = $config;
         $this->dir = $config['dir'];
