@@ -15,8 +15,6 @@ class TemplatesCommand extends AbstractCommand
      */
     protected $collection;
 
-    protected static $defaultName = 'templates';
-
     /**
      * Constructor.
      *
@@ -33,9 +31,9 @@ class TemplatesCommand extends AbstractCommand
     /**
      * Configures the current command.
      */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Show the list of available migration templates');
+        $this->setName('templates')->setDescription('Show the list of available migration templates');
     }
 
     /**
@@ -60,21 +58,24 @@ class TemplatesCommand extends AbstractCommand
      */
     protected function collectRows()
     {
-        $rows = collect($this->collection->all())
-            ->filter(function ($template) {
-                return $template['is_alias'] == false;
-            })
-            ->sortBy('name')
-            ->map(function ($template) {
-                $row = [];
+        $templates = array_filter($this->collection->all(), function ($template) {
+            return $template['is_alias'] == false;
+        });
 
-                $names = array_merge([$template['name']], $template['aliases']);
-                $row[] = implode("\n/ ", $names);
-                $row[] = wordwrap($template['path'], 65, "\n", true);
-                $row[] = wordwrap($template['description'], 25, "\n", true);
+        usort($templates, function ($a, $b) {
+            return $a['name'] <=> $b['name'];
+        });
 
-                return $row;
-            });
+        $rows = array_map(function ($template) {
+            $row = [];
+
+            $names = array_merge([$template['name']], $template['aliases']);
+            $row[] = implode("\n/ ", $names);
+            $row[] = wordwrap($template['path'], 65, "\n", true);
+            $row[] = wordwrap($template['description'], 25, "\n", true);
+
+            return $row;
+        }, $templates);
 
         return $this->separateRows($rows);
     }
